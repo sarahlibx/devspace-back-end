@@ -47,7 +47,7 @@ def create_comment(post_id):
         
         new_comment_id = cursor.fetchone()['id']
 
-        cursor.execute("""SELECT c.*, u.username AS comment_author_username
+        cursor.execute("""SELECT c.*, u.username AS author_username
                         FROM comments c
                         JOIN users u ON c.user_id = u.id
                         WHERE c.id = %s
@@ -119,7 +119,7 @@ def show_comment(comment_id):
 # DELETE comment by id (and by author of comment)
 @comments_blueprint.route('/posts/<post_id>/comments/<comment_id>', methods=['DELETE'])
 @token_required
-def delete_comment(comment_id):
+def delete_comment(post_id, comment_id):
     try:
         connection = get_db_connection()
         cursor = connection.cursor(
@@ -134,11 +134,10 @@ def delete_comment(comment_id):
 
         comment_to_delete = cursor.fetchone()
         
+        # If nothing was returned, the ID didn't exist or you don't own it
         if comment_to_delete is None:
-            return jsonify({"error": "Comment not found"}), 404
-        
-        if comment_to_delete["user_id"] != g.user["id"]:
-            return jsonify({"error": "Unauthorized"}), 401
+            connection.close()
+            return jsonify({"error": "Comment not found or Unauthorized"}), 404
         
         connection.commit()
         connection.close()
