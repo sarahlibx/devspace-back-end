@@ -12,35 +12,42 @@ def get_db_connection():
     return connection
 
 
-def consolidate_comments_in_hoots(hoots_with_comments):
-    print(hoots_with_comments)
-    consolidated_hoots = []
-    for hoot in hoots_with_comments:
-        # Check if this hoot has already been added to consolidated_hoots
-        hoot_exists = False
-        for consolidated_hoot in consolidated_hoots:
-            if hoot["id"] == consolidated_hoot["id"]:
-                hoot_exists = True
-                consolidated_hoot["comments"].append(
-                    {"comment_text": hoot["comment_text"],
-                     "comment_id": hoot["comment_id"],
-                     "comment_author_username": hoot["comment_author_username"]
-                     })
-                break
+def consolidate_comments_in_posts(posts_with_comments):
+    consolidated_posts = []
 
-        # If the hoot doesn't exist in consolidated_hoots, add it
-        if not hoot_exists:
-            hoot["comments"] = []
-            if hoot["comment_id"] is not None:
-                hoot["comments"].append(
-                    {"comment_text": hoot["comment_text"],
-                     "comment_id": hoot["comment_id"],
-                     "comment_author_username": hoot["comment_author_username"]
-                     }
-                )
-            del hoot["comment_id"]
-            del hoot["comment_text"]
-            del hoot["comment_author_username"]
-            consolidated_hoots.append(hoot)
+    for row in posts_with_comments:
+        # Check if this post has already been added to consolidated_posts
+        existing_post = next((p for p in consolidated_posts if p["id"] == row["id"]), None)
 
-    return consolidated_hoots
+        if existing_post:
+            # If the post exists and there's a comment in this row, add it
+            if row["comment_id"]:
+                existing_post["comments"].append({
+                    "id": row["comment_id"],
+                    "content": row["comment_text"],
+                    "author_username": row["comment_author_username"],
+                    "user_id": row["comment_author_id"]
+                })
+        else:
+            # Create the base post object
+            new_post = {
+                "id": row["id"],
+                "user_id": row["post_author_id"],
+                "content": row["content"],
+                "author_username": row["author_username"],
+                "created_at": row["created_at"],
+                "comments": []
+            }
+            
+            # If the first row retrieved has a comment, add it
+            if row["comment_id"]:
+                new_post["comments"].append({
+                    "id": row["comment_id"],
+                    "content": row["comment_text"],
+                    "author_username": row["comment_author_username"],
+                    "user_id": row["comment_author_id"]
+                })
+            
+            consolidated_posts.append(new_post)
+
+    return consolidated_posts

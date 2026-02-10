@@ -3,17 +3,21 @@ from flask_cors import CORS
 import os
 import psycopg2
 import psycopg2.extras
+
 from auth_middleware import token_required
 from auth_blueprint import authentication_blueprint
-from hoots_blueprint import hoots_blueprint
+from posts_blueprint import posts_blueprint
 from comments_blueprint import comments_blueprint
+from friends_blueprint import friends_blueprint
+from profile_blueprint import profile_blueprint
 
 app = Flask(__name__)
 CORS(app)
 app.register_blueprint(authentication_blueprint)
-app.register_blueprint(hoots_blueprint)
+app.register_blueprint(posts_blueprint)
 app.register_blueprint(comments_blueprint)
-
+app.register_blueprint(friends_blueprint)
+app.register_blueprint(profile_blueprint)
 
 def get_db_connection():
     connection = psycopg2.connect(
