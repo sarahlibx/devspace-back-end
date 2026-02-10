@@ -5,16 +5,16 @@ import psycopg2.extras
 from auth_middleware import token_required
 from db_helpers import get_db_connection
 
-profile_blueprint = Blueprint('profile_blueprint', __name__)
+network_blueprint = Blueprint('network_blueprint', __name__)
 
-@profile_blueprint.route('/users/<user_id>/profile', methods=['GET'])
+@network_blueprint.route('/users/<int:user_id>/wall', methods=['GET'])
 def get_user_profile(user_id):
     try:
         connection = get_db_connection()
         cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-        # 1. Fetch User Details
-        cursor.execute("SELECT id, username, created_at FROM users WHERE id = %s", (user_id,))
+        # Fetch User Details
+        cursor.execute("SELECT id, username FROM users WHERE id = %s", (int(user_id),))
         user_info = cursor.fetchone()
 
         if not user_info:
@@ -27,11 +27,11 @@ def get_user_profile(user_id):
                     JOIN friends f ON u.id = f.friend_id
                     WHERE f.user_id = %s
                     LIMIT 8;
-                    """, (user_id,))
+                    """, (int(user_id),))
         friends = cursor.fetchall()
 
         # fetch all posts by this user only
-        cursor.execute("SELECT * FROM posts WHERE user_id = %s ORDER BY id DESC", (user_id,))
+        cursor.execute("SELECT * FROM posts WHERE user_id = %s ORDER BY id DESC", (int(user_id),))
         posts = cursor.fetchall()
 
         connection.close()
@@ -45,4 +45,5 @@ def get_user_profile(user_id):
         }), 200
     
     except Exception as error:
+        print(f"CRASH IN NETWORK_BP: {error}")
         return jsonify({"error": str(error)}), 500
