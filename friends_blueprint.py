@@ -26,8 +26,9 @@ def add_friend(friend_id):
         # create the friendship
         cursor.execute("""
                     INSERT INTO friends (user_id, friend_id)
-                    VALUES (%s, %s) RETURNING *;
-                    """, (g.user['id'], friend_id))
+                    VALUES (%s, %s), (%s, %s)
+                    ON CONFLICT (user_id, friend_id) DO NOTHING;
+                    """, (g.user['id'], friend_id, friend_id, g.user['id']))
         
         connection.commit()
         connection.close()

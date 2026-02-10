@@ -47,3 +47,24 @@ def get_user_profile(user_id):
     except Exception as error:
         print(f"CRASH IN NETWORK_BP: {error}")
         return jsonify({"error": str(error)}), 500
+    
+# search for user by name
+@network_blueprint.route('/users/search<query>', methods=['GET'])
+@token_required
+def search_users(query):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        search_query = f"%{query}%"
+        cursor.execute("""
+            SELECT id, username FROM users 
+            WHERE username ILIKE %s AND id != %s
+            LIMIT 20
+        """, (search_query, g.user['id']))
+
+        results = cursor.fetchall()
+        connection.close()
+        return jsonify(results), 200
+    except Exception as error:
+        return jsonify({'error': str(error)}), 500
