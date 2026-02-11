@@ -49,7 +49,7 @@ def get_user_profile(user_id):
         return jsonify({"error": str(error)}), 500
     
 # search for user by name
-@network_blueprint.route('/users/search<query>', methods=['GET'])
+@network_blueprint.route('/users/search/<query>', methods=['GET'])
 @token_required
 def search_users(query):
     try:
