@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, g
 from db_helpers import get_db_connection
 import psycopg2.extras
 from auth_middleware import token_required
+from main import upload_image
 
 profiles_blueprint = Blueprint('profiles_blueprint', __name__)
 
@@ -27,19 +28,28 @@ def get_profile(user_id):
 @token_required
 def upsert_my_profile():
     try:
-        data = request.get_json()
+        image = request.files.get('photo')
+        text_data = request.form
+
+        profile_picture_url = text_data.get('profile_picture_url')
+        if image:
+            print("--- Uploading to Cloudinary ---")
+            profile_picture_url = upload_image(image)
+            print(f"--- New URL: {profile_picture_url} ---")
+
         connection = get_db_connection()
         cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
         cursor.execute("""
             INSERT INTO profiles (
-                user_id, bio_quote, fun_fact, fav_band, 
+                user_id, profile_picture_url, bio_quote, fun_fact, fav_band, 
                 fav_book, hobbies, fav_language, 
                 email, github_link, linkedin_link
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (user_id) 
-            DO UPDATE SET 
+            DO UPDATE SET
+                profile_picture_url = EXCLUDED.profile_picture_url, 
                 bio_quote = EXCLUDED.bio_quote,
                 fun_fact = EXCLUDED.fun_fact,
                 fav_band = EXCLUDED.fav_band,
@@ -51,12 +61,17 @@ def upsert_my_profile():
                 linkedin_link = EXCLUDED.linkedin_link
             RETURNING *;
         """, (
-            g.user['id'], 
-            data.get('bio_quote'), data.get('fun_fact'), 
-            data.get('fav_band'), data.get('fav_book'), 
-            data.get('hobbies'), data.get('fav_language'), 
-            data.get('email'), data.get('github_link'), 
-            data.get('linkedin_link')
+            g.user['id'],
+            profile_picture_url, 
+            text_data.get('bio_quote'), 
+            text_data.get('fun_fact'), 
+            text_data.get('fav_band'), 
+            text_data.get('fav_book'), 
+            text_data.get('hobbies'), 
+            text_data.get('fav_language'), 
+            text_data.get('email'), 
+            text_data.get('github_link'), 
+            text_data.get('linkedin_link')
         ))
 
         profile = cursor.fetchone()
@@ -64,4 +79,7 @@ def upsert_my_profile():
         connection.close()
         return jsonify(profile), 200
     except Exception as error:
+        print("!!!!!!!!!!!!!!!!!!!!!!!!")
+        print("ACTUAL SERVER ERROR:", str(error))
+        print("!!!!!!!!!!!!!!!!!!!!!!!!")
         return jsonify({"error": str(error)}), 500

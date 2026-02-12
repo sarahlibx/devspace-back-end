@@ -3,7 +3,6 @@ from flask import request, jsonify, g
 import jwt
 import os
 
-
 def token_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
