@@ -44,9 +44,9 @@ def upsert_my_profile():
             INSERT INTO profiles (
                 user_id, profile_picture_url, bio_quote, fun_fact, fav_band, 
                 fav_book, hobbies, fav_language, 
-                email, github_link, linkedin_link
+                email, github_link, linkedin_link, profile_song
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (user_id) 
             DO UPDATE SET
                 profile_picture_url = EXCLUDED.profile_picture_url, 
@@ -58,7 +58,8 @@ def upsert_my_profile():
                 fav_language = EXCLUDED.fav_language,
                 email = EXCLUDED.email,
                 github_link = EXCLUDED.github_link,
-                linkedin_link = EXCLUDED.linkedin_link
+                linkedin_link = EXCLUDED.linkedin_link,
+                profile_song = EXCLUDED.profile_song
             RETURNING *;
         """, (
             g.user['id'],
@@ -71,7 +72,8 @@ def upsert_my_profile():
             text_data.get('fav_language'), 
             text_data.get('email'), 
             text_data.get('github_link'), 
-            text_data.get('linkedin_link')
+            text_data.get('linkedin_link'),
+            text_data.get('profile_song')
         ))
 
         profile = cursor.fetchone()

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import psycopg2
@@ -55,6 +55,5 @@ def users_show(user_id):
     if user is None:
         return jsonify({"err": "User not found"}), 404
     return jsonify(user), 200
-
 
 app.run(debug=True, port=5000)
