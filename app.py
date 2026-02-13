@@ -56,4 +56,5 @@ def users_show(user_id):
         return jsonify({"err": "User not found"}), 404
     return jsonify(user), 200
 
-app.run(debug=True, port=5000)
+if __name__ == '__main__':
+    app.run()
