@@ -1,7 +1,6 @@
 import os
 import psycopg2
 
-
 def get_db_connection():
     connection = psycopg2.connect(
         host='localhost',
@@ -32,9 +31,10 @@ def consolidate_comments_in_posts(posts_with_comments):
             # Create the base post object
             new_post = {
                 "id": row["id"],
-                "user_id": row["post_author_id"],
+                "user_id": row.get("post_author_id") or row.get("user_id"),
                 "content": row["content"],
                 "author_username": row["author_username"],
+                "profile_picture_url": row.get("profile_picture_url"),
                 "created_at": row["created_at"],
                 "comments": []
             }

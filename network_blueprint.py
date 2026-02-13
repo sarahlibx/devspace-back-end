@@ -22,9 +22,10 @@ def get_user_profile(user_id):
         
         # fetch users friends (top 8)
         cursor.execute("""
-                    SELECT u.id, u.username
+                    SELECT u.id, u.username, p.profile_picture_url
                     FROM users u
                     JOIN friends f ON u.id = f.friend_id
+                    LEFT JOIN profiles p ON u.id = p.user_id
                     WHERE f.user_id = %s
                     LIMIT 8;
                     """, (int(user_id),))

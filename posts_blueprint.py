@@ -19,20 +19,23 @@ def posts_index():
         # JOIN users 
         query = """
             SELECT 
-                p.id, 
-                p.content, 
-                p.user_id AS post_author_id, 
-                p.created_at,
-                u.username AS author_username,
-                c.id AS comment_id, 
-                c.content AS comment_text,
+                posts.id,
+                posts.title,
+                posts.content,
+                posts.created_at,
+                posts.user_id AS post_author_id, 
+                users.username AS author_username, 
+                profiles.profile_picture_url,
+                comments.id AS comment_id,
+                comments.content AS comment_text,
                 u_comment.username AS comment_author_username,
-                c.user_id AS comment_author_id
-            FROM posts p
-            JOIN users u ON p.user_id = u.id
-            LEFT JOIN comments c ON p.id = c.post_id
-            LEFT JOIN users u_comment ON c.user_id = u_comment.id
-            ORDER BY p.id DESC;
+                comments.user_id AS comment_author_id
+            FROM posts
+            JOIN users ON posts.user_id = users.id
+            LEFT JOIN profiles ON posts.user_id = profiles.user_id
+            LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN users u_comment ON comments.user_id = u_comment.id
+            ORDER BY posts.created_at DESC;
         """
         
         cursor.execute(query)
