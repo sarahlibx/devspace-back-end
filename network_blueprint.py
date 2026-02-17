@@ -35,6 +35,9 @@ def get_user_profile(user_id):
         cursor.execute("SELECT * FROM posts WHERE user_id = %s ORDER BY id DESC", (int(user_id),))
         posts = cursor.fetchall()
 
+        # TEST
+        print(f"--- LIST CHECK: Number of unique friends found: {len(friends)} ---")
+
         connection.close()
 
         # load it for the front end
