@@ -60,12 +60,12 @@ exit
 ```
 
 Don't forget to create a `.env` file with:
-JWT_SECRET=<your_secret>
-POSTGRES_USERNAME=<your_username>
-POSTGRES_PASSWORD=<your-password>
-POSTGRES_DATABASE=<database_name>
-API_KEY=<your_cloudinary_key>
-API_SECRET=<your_cloudinary_secret>
+- JWT_SECRET=<your_secret>
+- POSTGRES_USERNAME=<your_username>
+- POSTGRES_PASSWORD=<your-password>
+- POSTGRES_DATABASE=<database_name>
+- API_KEY=<your_cloudinary_key>
+- API_SECRET=<your_cloudinary_secret>
 
 ### Frontend Repository
 The frontend repository for this project can be found here:  
