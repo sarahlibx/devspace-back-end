@@ -46,12 +46,8 @@ def posts_index():
 
         connection.commit()
         connection.close()
-        print(f"SUCCESS: Found {len(consolidated_posts)} posts")
         return jsonify(consolidated_posts), 200
     except Exception as error:
-        print("!!!!!!!! BACKEND ERROR !!!!!!!!")
-        print(error) 
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         return jsonify({"error": str(error)}), 500
 
 # POST create new post route
@@ -76,10 +72,13 @@ def create_post():
         # fetch full post to return to the front end
         cursor.execute("""SELECT p.id, 
                             p.user_id, 
-                            p.content,  
+                            p.content,
+                            p.created_at,
                             u.username AS author_username
+                            prof.profile_picture_url,  
                         FROM posts p
-                        JOIN users u  ON p.user_id = u.id
+                        JOIN users u ON p.user_id = u.id
+                        LEFT JOIN profiles prof ON u.id = prof.user_id
                         WHERE p.id = %s
                        """, (new_post_id,))
         

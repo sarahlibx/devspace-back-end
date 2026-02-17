@@ -33,9 +33,7 @@ def upsert_my_profile():
 
         profile_picture_url = text_data.get('profile_picture_url')
         if image:
-            print("--- Uploading to Cloudinary ---")
             profile_picture_url = upload_image(image)
-            print(f"--- New URL: {profile_picture_url} ---")
 
         connection = get_db_connection()
         cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -81,7 +79,4 @@ def upsert_my_profile():
         connection.close()
         return jsonify(profile), 200
     except Exception as error:
-        print("!!!!!!!!!!!!!!!!!!!!!!!!")
-        print("ACTUAL SERVER ERROR:", str(error))
-        print("!!!!!!!!!!!!!!!!!!!!!!!!")
         return jsonify({"error": str(error)}), 500
