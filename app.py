@@ -13,9 +13,16 @@ from network_blueprint import network_blueprint
 from profiles_blueprint import profiles_blueprint
 
 app = Flask(__name__)
-frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
 
-CORS(app, resources={r"/*": {"origins": [frontend_url]}}, supports_credentials=True)
+allowed_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    os.environ.get('FRONTEND_URL')
+]
+
+origins = [o for o in allowed_origins if o is not None]
+
+CORS(app, resources={r"/*": {"origins": origins}}, supports_credentials=True)
 app.register_blueprint(authentication_blueprint)
 app.register_blueprint(posts_blueprint)
 app.register_blueprint(comments_blueprint)
