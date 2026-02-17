@@ -20,14 +20,6 @@ def get_user_profile(user_id):
         if not user_info:
             return jsonify({"error": "User not found"}), 404
         
-        # Get TOTAL friend COUNT 
-        cursor.execute("""
-            SELECT COUNT(*) as total 
-            FROM friends 
-            WHERE user_id = %s OR friend_id = %s
-        """, (user_id, user_id,))
-        total_count = cursor.fetchone()['total']
-        
         # fetch users friends (top 8)
         cursor.execute("""
                 SELECT u.id, u.username, p.profile_picture_url
@@ -37,8 +29,7 @@ def get_user_profile(user_id):
                     SELECT friend_id FROM friends WHERE user_id = %s
                     UNION
                     SELECT user_id FROM friends WHERE friend_id = %s
-                )
-                LIMIT 8;
+                );
                     """, (int(user_id),))
         friends = cursor.fetchall()
 
@@ -56,7 +47,7 @@ def get_user_profile(user_id):
             "user": user_info,
             "friends": friends,
             "posts": posts,
-            "friend_count": total_count
+            "friend_count": len(friends)
         }), 200
     
     except Exception as error:
