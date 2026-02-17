@@ -30,7 +30,7 @@ def get_user_profile(user_id):
                     UNION
                     SELECT user_id FROM friends WHERE friend_id = %s
                 );
-                    """, (int(user_id),))
+                    """, (int(user_id), (int(user_id),)))
         friends = cursor.fetchall()
 
         # fetch all posts by this user only
