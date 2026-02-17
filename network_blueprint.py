@@ -25,7 +25,7 @@ def get_user_profile(user_id):
             SELECT COUNT(*) as total 
             FROM friends 
             WHERE user_id = %s OR friend_id = %s
-        """, (user_id, user_id))
+        """, (user_id, user_id,))
         total_count = cursor.fetchone()['total']
         
         # fetch users friends (top 8)
