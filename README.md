@@ -5,7 +5,7 @@
 
 </div>
 
-# Backend
+# DevSpace Backend
 
 A RESTful networking app for managing users, profiles, posts, comments, and connection!
 
@@ -14,8 +14,6 @@ Built with Python, Flask & PostgreSQL.
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
-
-Front End Repository [Front End Repo](https://github.com/sarahlibx/devspace-front-end)
 
 ---
 
