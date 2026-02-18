@@ -29,6 +29,7 @@ def consolidate_comments_in_posts(posts_with_comments):
             if row["comment_id"]:
                 existing_post["comments"].append({
                     "id": row["comment_id"],
+                    "title": row.get("title"),
                     "content": row["comment_text"],
                     "author_username": row["comment_author_username"],
                     "user_id": row["comment_author_id"]
@@ -38,6 +39,7 @@ def consolidate_comments_in_posts(posts_with_comments):
             new_post = {
                 "id": row["id"],
                 "user_id": row.get("post_author_id") or row.get("user_id"),
+                "title": row.get("title"),
                 "content": row["content"],
                 "author_username": row["author_username"],
                 "profile_picture_url": row.get("profile_picture_url"),

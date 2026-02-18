@@ -104,7 +104,7 @@ def show_post(post_id):
             SELECT 
                 p.id, 
                 p.title,
-                p.user_id AS post_author_id, 
+                p.user_id, 
                 p.content, 
                 u_post.username AS author_username, 
                 c.id AS comment_id, 
@@ -120,6 +120,8 @@ def show_post(post_id):
         """, (post_id,))
         
         posts = cursor.fetchall()
+        
+        print(f"DEBUG: SQL Row Sample: {posts[0]}")
         
         consolidated_posts = consolidate_comments_in_posts(posts)
         
@@ -161,7 +163,7 @@ def update_post(post_id):
 
         # fetch for username 
         cursor.execute("""
-                        SELECT p.id, p.user_id, p.content, u.username AS author_username
+                        SELECT p.id, p.user_id, p.title, p.content, u.username AS author_username
                         FROM posts p
                         JOIN users u ON p.user_id = u.id
                         WHERE p.id = %s
