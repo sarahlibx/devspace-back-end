@@ -61,17 +61,18 @@ def create_post():
             cursor_factory=psycopg2.extras.RealDictCursor)
         # 'g.user' comes from auth_middleware
         cursor.execute("""
-                        INSERT INTO posts (content, user_id)
-                        VALUES (%s, %s)
+                        INSERT INTO posts (title, content, user_id)
+                        VALUES (%s, %s, %s)
                         RETURNING *;
                         """,
-                       (new_post['content'], g.user['id'])
+                       (new_post['title'], new_post['content'], g.user['id'])
                        )
         new_post_id = cursor.fetchone()["id"]
 
         # fetch full post to return to the front end
         cursor.execute("""SELECT p.id, 
                             p.user_id, 
+                            p.title,
                             p.content,
                             p.created_at,
                             u.username AS author_username,
@@ -151,15 +152,15 @@ def update_post(post_id):
         # update content & return full updated post using JOIN in RETURNING phase
         cursor.execute("""
                        UPDATE posts 
-                       SET content = %s 
+                       SET title = %s, content = %s 
                        WHERE id = %s RETURNING id, content, user_id;
-                       """,(update_post["content"], post_id))
+                       """,(update_post["title"], update_post["content"], post_id))
                        
         updated_post = cursor.fetchone()
 
         # fetch for username 
         cursor.execute("""
-                       SELECT p.id, p.user_id, p.content, u.username AS author_username
+                        SELECT p.id, p.user_id, p.content, u.username AS author_username
                         FROM posts p
                         JOIN users u ON p.user_id = u.id
                         WHERE p.id = %s
