@@ -74,8 +74,8 @@ def create_post():
                             p.user_id, 
                             p.content,
                             p.created_at,
-                            u.username AS author_username
-                            prof.profile_picture_url,  
+                            u.username AS author_username,
+                            prof.profile_picture_url  
                         FROM posts p
                         JOIN users u ON p.user_id = u.id
                         LEFT JOIN profiles prof ON u.id = prof.user_id
