@@ -103,6 +103,7 @@ def show_post(post_id):
         cursor.execute("""
             SELECT 
                 p.id, 
+                p.title,
                 p.user_id AS post_author_id, 
                 p.content, 
                 u_post.username AS author_username, 
